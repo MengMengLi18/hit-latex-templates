@@ -2,12 +2,14 @@
 % HIT 学位开题报告通用排版样式。
 % Word 的 point 对应 TeX 的 bp，不是 TeX 的 pt。
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{hit-proposal}[2026/11/18 v1.0 HIT proposal template]
+\ProvidesPackage{hit-proposal}[2026/11/18 v1.1 HIT proposal template]
 \newif\ifproposal@strict
 \newif\ifproposal@pagenumbers
+\proposal@pagenumberstrue
 \newif\ifproposal@chinesecaptions
 \DeclareOption{strictfonts}{\proposal@stricttrue}
 \DeclareOption{pagenumbers}{\proposal@pagenumberstrue}
+\DeclareOption{nopagenumbers}{\proposal@pagenumbersfalse}
 \DeclareOption{chinesecaptions}{\proposal@chinesecaptionstrue}
 \ProcessOptions\relax
 \RequirePackage{iftex}
@@ -84,13 +86,20 @@
 % 11907 x 16840 twips；边距 1418 twips。
 \geometry{paperwidth=595.35bp,paperheight=842bp,
   left=70.9bp,right=70.9bp,top=70.9bp,bottom=70.9bp,
-  headheight=12bp,headsep=14.8bp,footskip=21.3bp}
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand\headrulewidth{0.75bp}
-\renewcommand\footrulewidth{0pt}
-\ifproposal@pagenumbers\fancyfoot[C]{\fontsize{9bp}{12bp}\selectfont\thepage}\fi
-\fancypagestyle{plain}{\fancyhf{}\renewcommand\headrulewidth{0.75bp}}
+  headheight=16bp,headsep=14.8bp,footskip=21.3bp}
+% 页眉右侧默认随 reporttype 更新；plain 与正文使用相同页眉页脚。
+\newcommand\proposal@pagefields{%
+  \fancyhf{}%
+  \fancyhead[L]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerleft}%
+  \fancyhead[R]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerright}%
+  \renewcommand\headrulewidth{0.75bp}%
+  \renewcommand\footrulewidth{0pt}%
+  \ifproposal@pagenumbers
+    \fancyfoot[C]{\normalfont\rmfamily\fontsize{10.5bp}{13bp}\selectfont\thepage}%
+  \fi}
+\fancypagestyle{proposal}{\proposal@pagefields}
+\fancypagestyle{plain}{\proposal@pagefields}
+\pagestyle{proposal}
 \setlength\parindent{24bp}
 \setlength\parskip{0pt}
 \raggedbottom
@@ -141,11 +150,11 @@
   {\contentslabel[\thecontentslabel.]{42bp}}{}
   {\titlerule*[3bp]{.}\contentspage}
 \newcommand\proposaltableofcontents{%
-  \clearpage
+  \clearpage\pagenumbering{Roman}%
   \pdfbookmark[0]{目录}{proposal-toc}%
   {\centering\normalfont\songti\fontsize{12bp}{21bp}\selectfont 目录\par}%
   \begingroup\normalsize\@starttoc{toc}\endgroup
-  \clearpage}
+  \clearpage\pagenumbering{arabic}}
 
 % 默认图题为 Figure；chinesecaptions 选项可改为“图”。
 \renewcommand\figurename{Figure}
@@ -180,6 +189,8 @@
 % 封面内容集中设置，版式与内容分离。
 \def\proposal@reporttype{博士学位开题报告}
 \def\proposal@doctype{学位论文}
+\def\proposal@headerleft{哈尔滨工业大学}
+\def\proposal@headerright{\proposal@reporttype}
 \def\proposal@title{请填写论文题目}
 \def\proposal@college{请填写学院}
 \def\proposal@major{请填写专业学位类别}
@@ -190,6 +201,8 @@
 \def\proposal@date{请填写日期}
 \define@key{proposal}{reporttype}{\def\proposal@reporttype{#1}}
 \define@key{proposal}{doctype}{\def\proposal@doctype{#1}}
+\define@key{proposal}{headerleft}{\def\proposal@headerleft{#1}}
+\define@key{proposal}{headerright}{\def\proposal@headerright{#1}}
 \define@key{proposal}{title}{\def\proposal@title{#1}}
 \define@key{proposal}{college}{\def\proposal@college{#1}}
 \define@key{proposal}{major}{\def\proposal@major{#1}}
@@ -200,34 +213,36 @@
 \define@key{proposal}{date}{\def\proposal@date{#1}}
 \newcommand\proposalsetup[1]{\setkeys{proposal}{#1}}
 \newcommand\proposal@coverrow[3]{%
-  \put(171.35,-#1){\makebox[96.4bp][s]{#2}%
+  \put(133.225,-#1){\makebox[96.4bp][s]{#2}%
     \underline{\makebox[232.5bp][c]{#3}}}}
 \newcommand\makeproposalcover{%
-  \clearpage\thispagestyle{plain}%
+  \clearpage\hypersetup{pageanchor=false}\thispagestyle{empty}%
   \hypersetup{pdftitle={\proposal@title},pdfauthor={\proposal@author}}%
   \pdfbookmark[0]{封面}{proposal-cover}%
   \AddToShipoutPictureFG*{\AtPageUpperLeft{%
     \setlength\unitlength{1bp}%
     \normalfont\songti\bfseries
-    \put(319.8,-155.4){\makebox[0pt][c]{%
-      \kaishu\fontsize{18bp}{31.2bp}\selectfont
-      \xeCJKsetup{CJKglue={\hskip 2bp}}哈尔滨工业大学}}%
-    \put(323.7,-219.2){\makebox[0pt][c]{%
+    % 原始校徽和校名字样见 assets/README.md；仅用 graphicx 裁去白边。
+    \put(297.675,-135){\makebox[0pt][c]{%
+      \includegraphics[trim=25bp 72bp 25bp 70bp,clip,width=32mm]{assets/hit-emblem.jpg}}}%
+    \put(297.675,-195){\makebox[0pt][c]{%
+      \includegraphics[trim=60bp 140bp 60bp 90bp,clip,width=92mm]{assets/hit-wordmark.jpg}}}%
+    \put(297.675,-250){\makebox[0pt][c]{%
       \fontsize{22bp}{31.2bp}\selectfont
       \xeCJKsetup{CJKglue={\hskip 2bp}}\proposal@reporttype}}%
-    \put(70.9,-280.2){\vtop{\hsize=453.55bp\centering\parindent=0pt
+    \put(70.9,-300){\vtop{\hsize=453.55bp\centering\parindent=0pt
       \fontsize{18bp}{31.2bp}\selectfont
       题\ 目：\proposal@title\par}}%
     \fontsize{16bp}{35bp}\selectfont
-    \put(313.75,-353.9){\makebox[0pt][c]{（\proposal@doctype）}}%
-    \proposal@coverrow{391.7}{学\hfill 院}{\proposal@college}%
-    \proposal@coverrow{426.7}{专业学位类别}{\proposal@major}%
-    \proposal@coverrow{461.7}{导\hfill 师}{\proposal@supervisor}%
-    \proposal@coverrow{496.7}{联合培养导师}{\proposal@cosupervisor}%
-    \proposal@coverrow{531.7}{研\hfill 究\hfill 生}{\proposal@author}%
-    \proposal@coverrow{566.7}{学\hfill 号}{\proposal@studentid}%
-    \proposal@coverrow{601.7}{开题报告日期}{\proposal@date}%
-    \put(313.75,-758.6){\makebox[0pt][c]{研究生院制}}%
+    \put(297.675,-370){\makebox[0pt][c]{（\proposal@doctype）}}%
+    \proposal@coverrow{412}{学\hfill 院}{\proposal@college}%
+    \proposal@coverrow{447}{专业学位类别}{\proposal@major}%
+    \proposal@coverrow{482}{导\hfill 师}{\proposal@supervisor}%
+    \proposal@coverrow{517}{联合培养导师}{\proposal@cosupervisor}%
+    \proposal@coverrow{552}{研\hfill 究\hfill 生}{\proposal@author}%
+    \proposal@coverrow{587}{学\hfill 号}{\proposal@studentid}%
+    \proposal@coverrow{622}{开题报告日期}{\proposal@date}%
+    \put(297.675,-758.6){\makebox[0pt][c]{研究生院制}}%
   }}%
-  \null\clearpage}
+  \null\clearpage\hypersetup{pageanchor=true}\pagenumbering{arabic}}
 \endinput

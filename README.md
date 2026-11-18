@@ -14,7 +14,7 @@
 
 ## 快速开始
 
-安装包含 XeLaTeX、BibTeX、CTeX、natbib 和 gbt7714 的 TeX 发行版。开题模板已附带所需的开源中西文字体。
+安装包含 XeLaTeX、BibTeX、CTeX、natbib 和 gbt7714 的 TeX 发行版。开题模板已附带所需的开源中西文字体、HIT 校徽和校名字样。默认开启文字页眉与居中页码，封面不编号，目录使用罗马数字，正文从 1 开始。
 
 进入开题模板目录并编译：
 
@@ -44,6 +44,7 @@ hit-latex-templates/
 │   ├── cover-info.tex         # 封面占位字段
 │   ├── hit-proposal.sty       # 排版设置
 │   ├── references.bib         # 公开书目示例
+│   ├── assets/                # HIT 校徽、校名字样与来源说明
 │   ├── fonts/                 # 开源字体与上游许可证
 │   ├── figures/               # 图片目录
 │   ├── docs/                  # 版式说明、文献条目说明和预览
@@ -64,4 +65,4 @@ hit-latex-templates/
 
 ## 许可
 
-模板源代码与文档采用 [MIT License](LICENSE)。第三方字体遵循各自许可证，详见 [第三方组件说明](THIRD_PARTY_NOTICES.md)。
+模板源代码与文档采用 [MIT License](LICENSE)。第三方字体遵循各自许可证；HIT 标识的相关权利归哈尔滨工业大学。详见 [第三方组件说明](THIRD_PARTY_NOTICES.md)。

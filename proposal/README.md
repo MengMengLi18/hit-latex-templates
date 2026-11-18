@@ -10,7 +10,8 @@
 
 ## 包含内容
 
-- 封面、四级目录、九个正文一级章节及自动生成的参考文献章节。
+- 带 HIT 校徽与校名字样的封面、四级目录、九个正文一级章节及自动生成的参考文献章节。
+- 默认开启双侧文字页眉和居中页码；目录使用罗马数字，正文从 1 开始。
 - 统一的页面尺寸、边距、字体、字号、行距、缩进和图表题注。
 - BibTeX 文献库与上标方括号数字引用，支持多篇文献排序、压缩。
 - 可直接使用的 Fandol 中文字体、TeX Gyre Termes 西文字体及其许可证。
@@ -46,6 +47,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 | `references.bib` | 参考文献数据库；仅含公开的排版文献示例 |
 | `figures/` | 个人报告副本中存放图片的位置 |
 | `fonts/` | 开源字体、来源说明、许可证和校验值 |
+| `assets/` | HIT 校徽、校名字样与官方来源说明 |
 | `docs/format-spec.md` | 默认版式参数 |
 | `docs/preview.pdf` | 用公开占位内容编译的预览 |
 | `build.sh`、`.latexmkrc` | 编译入口与配置 |
@@ -110,17 +112,33 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 
 ## 样式选项
 
-默认有页眉横线，页脚不显示页码；图题使用 `Figure`，表题使用“表”。可按需开启：
+默认页眉左侧为“哈尔滨工业大学”，右侧使用封面中的 `reporttype`，下方保留横线。页码在页脚居中：封面不显示页眉、横线或页码；目录使用 I、II 等罗马数字；正文从 1 开始连续编号。普通页面和 `plain` 页面使用相同页眉页脚。
+
+可以在 `cover-info.tex` 的 `\proposalsetup` 中按需覆盖页眉：
 
 ```tex
-\usepackage[pagenumbers,chinesecaptions]{hit-proposal}
+\proposalsetup{
+  headerleft={哈尔滨工业大学},
+  headerright={博士学位开题报告}
+}
+```
+
+不填写 `headerright` 时，它会自动跟随 `reporttype` 更新。
+
+图题默认使用 `Figure`，表题使用“表”；中文图题可按需开启：
+
+```tex
+\usepackage[chinesecaptions]{hit-proposal}
 ```
 
 | 选项 | 作用 |
 | --- | --- |
-| `pagenumbers` | 正文和目录显示页脚页码；封面不显示 |
+| `pagenumbers` | 显示目录和正文页码（默认开启，兼容已有写法） |
+| `nopagenumbers` | 按需关闭目录和正文的页脚页码 |
 | `chinesecaptions` | 将图题标签改为“图” |
 | `strictfonts` | 使用自行提供的宋体、黑体、楷体和 Times New Roman；缺少文件时报错 |
+
+封面使用随模板保存的官方校徽与校名字样，来源及原始文件校验值见 [标识资源说明](assets/README.md)。编译时无需联网。
 
 默认字体固定为项目附带的 Fandol 和 TeX Gyre Termes，不会根据某台机器上的字体自动改变。`strictfonts` 仅从 `fonts/local/` 加载，所需文件名见该目录的说明。该目录里的字体文件不会被 Git 默认收录。
 
@@ -134,4 +152,4 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 
 ## 许可
 
-模板源代码和文档采用 [MIT License](LICENSE)。第三方字体按各自许可证分发，不适用本项目的 MIT 许可，详见 [第三方说明](THIRD_PARTY_NOTICES.md)。
+模板源代码和文档采用 [MIT License](LICENSE)。第三方字体按各自许可证分发；HIT 校徽和校名字样的相关权利归哈尔滨工业大学，不适用本项目的 MIT 许可。详见 [第三方说明](THIRD_PARTY_NOTICES.md)。
