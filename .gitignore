@@ -1,5 +1,5 @@
-# Build products; sync/log files can contain machine-specific paths.
-/build/
+# Build products from every template; logs can contain local paths.
+build/
 *.aux
 *.bbl
 *.bcf
@@ -18,11 +18,11 @@
 *.snm
 *.vrb
 *.pdf
-!docs/preview.pdf
+!**/docs/preview.pdf
 
-# Optional private fonts are local-only.
-/fonts/local/*
-!/fonts/local/README.txt
+# Optional private fonts remain local to each template.
+**/fonts/local/*
+!**/fonts/local/README.txt
 
 # Editor and OS state.
 .vscode/
