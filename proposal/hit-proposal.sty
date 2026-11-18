@@ -1,21 +1,44 @@
-% SPDX-License-Identifier: MIT
-% HIT 学位开题报告通用排版样式。
-% Word 的 point 对应 TeX 的 bp，不是 TeX 的 pt。
+% ============================================================================
+% hit-proposal.sty  |  哈尔滨工业大学博士学位开题报告版式
+% ============================================================================
+% 来源：按原 Word 文件版式提取，保留原始尺寸与公开接口。
+% 单位：Word point 对应 TeX bp（1bp = 1/72in），不要随意替换为 pt。
+%
+% 依赖：XeLaTeX + ctex 文档类（或主文件中自行加载 ctex）。
+% 主文件示例：\documentclass[UTF8]{ctexart}
+%               \usepackage{hit-proposal}
+%
+% 配置选项：
+%   strictfonts       原始字体缺失时报告错误
+%   pagenumbers       显示页码（默认）
+%   nopagenumbers     隐藏页码
+% 图题、表题、目录及交叉引用统一使用中文名称。
+%
+% 对外接口：\proposalsetup、\makeproposalcover、\proposaltableofcontents、
+%           \wordhighlight、\cref、\Cref。
+% 字体路径：优先 fonts/ 中的原字体，再查找同名字体文件，最后使用项目字体。
+% ============================================================================
+
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{hit-proposal}[2026/11/18 v1.2 HIT proposal template]
+\ProvidesPackage{hit-proposal}[2026/11/18 HIT Chinese doctoral proposal]
+
+% ----------------------------------------------------------------------------
+% 01. 选项、编译器与宏包依赖
+% ----------------------------------------------------------------------------
 \newif\ifproposal@strict
 \newif\ifproposal@pagenumbers
 \proposal@pagenumberstrue
-\newif\ifproposal@chinesecaptions
+
 \DeclareOption{strictfonts}{\proposal@stricttrue}
 \DeclareOption{pagenumbers}{\proposal@pagenumberstrue}
 \DeclareOption{nopagenumbers}{\proposal@pagenumbersfalse}
-\DeclareOption{chinesecaptions}{\proposal@chinesecaptionstrue}
 \ProcessOptions\relax
+
 \RequirePackage{iftex}
 \ifXeTeX\else
-  \PackageError{hit-proposal}{Please compile with XeLaTeX}{Choose XeLaTeX as your compiler.}
+\PackageError{hit-proposal}{Please compile with XeLaTeX}{Choose XeLaTeX as your compiler.}
 \fi
+
 \RequirePackage{fontspec}
 \RequirePackage{geometry}
 \RequirePackage{fancyhdr}
@@ -25,167 +48,19 @@
 \RequirePackage{xcolor}
 \RequirePackage{keyval}
 \RequirePackage{float}
+\RequirePackage{xeCJKfntef}
 \RequirePackage{amsmath,amssymb}
 \RequirePackage{booktabs,tabularx,array}
 \RequirePackage{enumitem}
 \RequirePackage{caption}
-% GB/T 7714 的 BibTeX 样式使用 natbib；正文仍为上标方括号数字。
-\RequirePackage[super,square,sort&compress]{natbib}
+\RequirePackage[super,square,comma,sort&compress]{natbib}
 \RequirePackage{hyperref}
+\RequirePackage{cleveref} % 必须在 hyperref 之后
 \hypersetup{hidelinks,bookmarksnumbered=true,pdfencoding=auto}
 
-% 默认固定使用随模板分发的开源字体，保证不同机器上的选择一致。
-% strictfonts 只读取 fonts/local/ 中由使用者自行提供的字体。
-\newcommand\proposal@requiredlocalfont[1]{%
-  \IfFileExists{fonts/local/#1}{}{%
-    \PackageError{hit-proposal}{Required font missing: fonts/local/#1}%
-      {Provide the font in fonts/local/ or remove the strictfonts option.}}}
-\ifproposal@strict
-  \proposal@requiredlocalfont{simsun.ttc}
-  \proposal@requiredlocalfont{simhei.ttf}
-  \proposal@requiredlocalfont{times.ttf}
-  \proposal@requiredlocalfont{timesbd.ttf}
-  \proposal@requiredlocalfont{timesi.ttf}
-  \proposal@requiredlocalfont{timesbi.ttf}
-  \IfFileExists{fonts/local/kaiti.ttf}{\def\proposal@kaifile{kaiti.ttf}}{%
-    \def\proposal@kaifile{simkai.ttf}%
-    \proposal@requiredlocalfont{simkai.ttf}}
-  \setCJKmainfont[Path=fonts/local/,FontIndex=0,AutoFakeBold=2]{simsun.ttc}
-  \setCJKfamilyfont{zhsong}[Path=fonts/local/,FontIndex=0,AutoFakeBold=2]{simsun.ttc}
-  \setCJKsansfont[Path=fonts/local/]{simhei.ttf}
-  \setCJKfamilyfont{zhhei}[Path=fonts/local/]{simhei.ttf}
-  \setCJKfamilyfont{zhkai}[Path=fonts/local/,AutoFakeBold=2]{\proposal@kaifile}
-  \setmainfont[Path=fonts/local/,BoldFont=timesbd.ttf,ItalicFont=timesi.ttf,
-    BoldItalicFont=timesbi.ttf]{times.ttf}
-  \IfFileExists{fonts/local/cambria.ttc}{%
-    \newfontfamily\proposal@captionlatin[Path=fonts/local/,FontIndex=0]{cambria.ttc}%
-  }{\IfFileExists{fonts/local/cambria.ttf}{%
-    \newfontfamily\proposal@captionlatin[Path=fonts/local/]{cambria.ttf}%
-  }{\newcommand\proposal@captionlatin{\rmfamily}}}
-\else
-  \setCJKmainfont[Path=fonts/fandol/,Script=CustomDefault,
-    BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
-  \setCJKfamilyfont{zhsong}[Path=fonts/fandol/,Script=CustomDefault,
-    BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}
-  \setCJKsansfont[Path=fonts/fandol/,Script=CustomDefault,
-    BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
-  \setCJKfamilyfont{zhhei}[Path=fonts/fandol/,Script=CustomDefault,
-    BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
-  \setCJKfamilyfont{zhkai}[Path=fonts/fandol/,Script=CustomDefault,
-    AutoFakeBold=2]{FandolKai-Regular.otf}
-  \setmainfont[Path=fonts/tex-gyre/,BoldFont=texgyretermes-bold.otf,
-    ItalicFont=texgyretermes-italic.otf,
-    BoldItalicFont=texgyretermes-bolditalic.otf]{texgyretermes-regular.otf}
-  \newcommand\proposal@captionlatin{\rmfamily}
-\fi
-\providecommand\songti{\CJKfamily{zhsong}}
-\providecommand\heiti{\CJKfamily{zhhei}}
-\providecommand\kaishu{\CJKfamily{zhkai}}
-\xeCJKsetup{CJKmath=true}
-
-% 11907 x 16840 twips；边距 1418 twips。
-\geometry{paperwidth=595.35bp,paperheight=842bp,
-  left=70.9bp,right=70.9bp,top=70.9bp,bottom=70.9bp,
-  headheight=16bp,headsep=14.8bp,footskip=21.3bp}
-% 页眉右侧默认随 reporttype 更新；plain 与正文使用相同页眉页脚。
-\newcommand\proposal@pagefields{%
-  \fancyhf{}%
-  \fancyhead[L]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerleft}%
-  \fancyhead[R]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerright}%
-  \renewcommand\headrulewidth{0.75bp}%
-  \renewcommand\footrulewidth{0pt}%
-  \ifproposal@pagenumbers
-    \fancyfoot[C]{\normalfont\rmfamily\fontsize{10.5bp}{13bp}\selectfont\thepage}%
-  \fi}
-\fancypagestyle{proposal}{\proposal@pagefields}
-\fancypagestyle{plain}{\proposal@pagefields}
-\pagestyle{proposal}
-\setlength\parindent{24bp}
-\setlength\parskip{0pt}
-\raggedbottom
-\setlength\emergencystretch{1em}
-% 正文网格基准 15.6bp，行距系数 1.2，连续行基线相距 18.72bp。
-\renewcommand\normalsize{%
-  \@setfontsize\normalsize{12bp}{18.72bp}%
-  \setlength\abovedisplayskip{8bp}\setlength\belowdisplayskip{8bp}%
-  \setlength\abovedisplayshortskip{4bp}\setlength\belowdisplayshortskip{4bp}}
-\AtBeginDocument{\normalsize\songti}
-
-% 标题末尾点属于编号格式；一级/二级之间不强制换页。
-\setcounter{secnumdepth}{4}
-\setcounter{tocdepth}{4}
-\ctexset{
-  section={format=\normalfont\heiti\fontsize{15bp}{15.6bp}\selectfont,
-    name={},number=\arabic{section},aftername={.\hspace{1.2bp}},
-    beforeskip=7.8bp,afterskip=7.8bp,indent=0pt,afterindent=true},
-  subsection={format=\normalfont\heiti\fontsize{14bp}{18.72bp}\selectfont,
-    name={},number=\thesection.\arabic{subsection},
-    numberformat=\fontsize{12bp}{18.72bp}\selectfont,
-    aftername={.\hspace{2bp}},beforeskip=7.8bp,afterskip=7.8bp,
-    indent=0pt,afterindent=true,runin=false},
-  subsubsection={format=\normalfont\heiti\fontsize{12bp}{15.6bp}\selectfont,
-    name={},number=\thesubsection.\arabic{subsubsection},
-    aftername={.\hspace{0.5bp}},beforeskip=0pt,afterskip=0pt,
-    indent=0pt,afterindent=true,runin=false},
-  paragraph={format=\normalfont\heiti\fontsize{12bp}{24.18bp}\selectfont,
-    name={},number=\thesubsubsection.\arabic{paragraph},
-    aftername={.\hspace{6bp}},beforeskip=0pt,afterskip=0pt,
-    indent=0pt,runin=false,afterindent=true}
-}
-% 四级目录：宋体12bp，不沿用 LaTeX 默认的加粗一级条目。
-\titlecontents{section}[52.6bp]
-  {\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
-  {\contentslabel[\thecontentslabel.]{28.6bp}}{}
-  {\titlerule*[3bp]{.}\contentspage}
-\titlecontents{subsection}[73.6bp]
-  {\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
-  {\contentslabel[\thecontentslabel.]{37.6bp}}{}
-  {\titlerule*[3bp]{.}\contentspage}
-\titlecontents{subsubsection}[84bp]
-  {\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
-  {\contentslabel[\thecontentslabel.]{36bp}}{}
-  {\titlerule*[3bp]{.}\contentspage}
-\titlecontents{paragraph}[102bp]
-  {\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
-  {\contentslabel[\thecontentslabel.]{42bp}}{}
-  {\titlerule*[3bp]{.}\contentspage}
-\newcommand\proposaltableofcontents{%
-  \clearpage\pagenumbering{Roman}%
-  \pdfbookmark[0]{目录}{proposal-toc}%
-  {\centering\normalfont\songti\fontsize{12bp}{21bp}\selectfont 目录\par}%
-  \begingroup\normalsize\@starttoc{toc}\endgroup
-  \clearpage\pagenumbering{arabic}}
-
-% 默认图题为 Figure；chinesecaptions 选项可改为“图”。
-\renewcommand\figurename{Figure}
-\renewcommand\tablename{表}
-\ifproposal@chinesecaptions\renewcommand\figurename{图}\fi
-\DeclareCaptionFont{proposal}{\songti\proposal@captionlatin\fontsize{10bp}{15.6bp}\selectfont}
-\captionsetup{font=proposal,labelfont=normalfont,labelsep=space,
-  justification=centering,singlelinecheck=false,skip=3bp}
-\setlist[enumerate]{label=（\arabic*）,leftmargin=48bp,labelsep=0pt,
-  itemsep=0pt,parsep=0pt,topsep=0pt,partopsep=0pt}
-\setlist[itemize]{leftmargin=24bp,itemsep=0pt,parsep=0pt,topsep=0pt}
-\setlength\textfloatsep{9bp}
-\setlength\intextsep{9bp}
-
-% 参考文献不缩进：编号与续行均从正文左边界开始，编号后空3bp。
-% thebibliography 自动生成编号章节；无需另写 \section{参考文献}。
-\renewcommand\refname{参考文献}
-\renewenvironment{thebibliography}[1]{%
-  \section{\refname}%
-  \normalfont\songti\fontsize{12bp}{15.6bp}\selectfont
-  \list{\@biblabel{\the\c@NAT@ctr}}{%
-    \global\c@NAT@ctr\z@
-    \setlength\leftmargin{0pt}\setlength\rightmargin{0pt}%
-    \setlength\labelwidth{0pt}\setlength\labelsep{0pt}%
-    \setlength\itemindent{0pt}\setlength\listparindent{0pt}%
-    \setlength\itemsep{0pt}\setlength\parsep{0pt}\setlength\topsep{0pt}%
-    \renewcommand\makelabel[1]{##1\hspace{3bp}}}%
-  \let\NAT@bibitem@first@sw\@firstoftwo
-  \sloppy\clubpenalty4000\widowpenalty4000
-}{\bibitem@fin\endlist\bibcleanup}
-
+% ----------------------------------------------------------------------------
+% 02. 封面与页眉元数据（\proposalsetup 的键值接口）
+% ----------------------------------------------------------------------------
 % 封面内容集中设置，版式与内容分离。
 \def\proposal@reporttype{博士学位开题报告}
 \def\proposal@doctype{学位论文}
@@ -215,41 +90,281 @@
 \define@key{proposal}{studentid}{\def\proposal@studentid{#1}}
 \define@key{proposal}{date}{\def\proposal@date{#1}}
 \newcommand\proposalsetup[1]{\setkeys{proposal}{#1}}
+
+% ----------------------------------------------------------------------------
+% 03. 字体检测、中文字体与西文字体
+% ----------------------------------------------------------------------------
+% 只按带扩展名的字体文件检测，避免缺失的系统字体名触发 mktextfm。
+% 优先使用 fonts/ 下的原字库，其次查找 TeX 可发现的同名字体文件。
+% 默认使用随项目提供的开源字体；strictfonts 仍要求原 Word 字库。
+\newcommand\proposal@withfontfile[3]{%
+	\IfFileExists{fonts/#1}{\def\proposal@fontfile{fonts/#1}#2}{%
+		\IfFontExistsTF{#1}{\def\proposal@fontfile{#1}#2}{#3}}}
+\newcommand\proposal@fallback[2]{%
+	\ifproposal@strict
+	\PackageError{hit-proposal}{Original font missing: #1}{Install the original font, or remove strictfonts for a substitute preview.}%
+	\else
+	\PackageInfo{hit-proposal}{Original font #1 unavailable; using #2}%
+	\fi}
+\proposal@withfontfile{simsun.ttc}{%
+	\setCJKmainfont[FontIndex=0,AutoFakeBold=2]{\proposal@fontfile}%
+	\setCJKfamilyfont{zhsong}[FontIndex=0,AutoFakeBold=2]{\proposal@fontfile}%
+}{%
+	\proposal@fallback{SimSun}{bundled FandolSong}%
+	% Fandol 没有 OpenType shaping 脚本；使用 fontspec 的可选默认脚本回退。
+	\setCJKmainfont[Path=fonts/fandol/,Script=CustomDefault,
+	BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}%
+	\setCJKfamilyfont{zhsong}[Path=fonts/fandol/,Script=CustomDefault,
+	BoldFont=FandolSong-Bold.otf]{FandolSong-Regular.otf}%
+}
+\proposal@withfontfile{simhei.ttf}{%
+	\setCJKsansfont{\proposal@fontfile}%
+	\setCJKfamilyfont{zhhei}{\proposal@fontfile}%
+}{%
+	\proposal@fallback{SimHei}{bundled FandolHei}%
+	\setCJKsansfont[Path=fonts/fandol/,Script=CustomDefault,
+	BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}%
+	\setCJKfamilyfont{zhhei}[Path=fonts/fandol/,Script=CustomDefault,
+	BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}%
+}
+\newcommand\proposal@setkai{%
+	\setCJKfamilyfont{zhkai}[AutoFakeBold=2]{\proposal@fontfile}}
+\proposal@withfontfile{kaiti.ttf}{\proposal@setkai}{%
+	\proposal@withfontfile{simkai.ttf}{\proposal@setkai}{%
+		\proposal@fallback{KaiTi / KaiTi_GB2312}{bundled FandolKai}%
+		\setCJKfamilyfont{zhkai}[Path=fonts/fandol/,Script=CustomDefault,
+		AutoFakeBold=2]{FandolKai-Regular.otf}%
+	}%
+}
+% Times New Roman 的四种字面成套存在时才使用，避免粗体或斜体缺失。
+\newcommand\proposal@iftimes[3]{%
+	\IfFontExistsTF{#1times.ttf}{%
+		\IfFontExistsTF{#1timesbd.ttf}{%
+			\IfFontExistsTF{#1timesi.ttf}{%
+				\IfFontExistsTF{#1timesbi.ttf}{#2}{#3}%
+			}{#3}%
+		}{#3}%
+	}{#3}}
+\newcommand\proposal@settimes[1]{%
+	% 用 Path 单独指定目录，避免将 fonts/ 误识别为 NFSS 字族名。
+	\setmainfont[Path=#1,BoldFont=timesbd.ttf,ItalicFont=timesi.ttf,
+	BoldItalicFont=timesbi.ttf]{times.ttf}}
+\proposal@iftimes{fonts/}{\proposal@settimes{fonts/}}{%
+	\proposal@iftimes{}{\proposal@settimes{}}{%
+		\proposal@fallback{Times New Roman}{bundled TeX Gyre Termes}%
+		\setmainfont[Path=fonts/tex-gyre/,BoldFont=texgyretermes-bold.otf,
+		ItalicFont=texgyretermes-italic.otf,
+		BoldItalicFont=texgyretermes-bolditalic.otf]{texgyretermes-regular.otf}%
+	}%
+}
+\providecommand\songti{\CJKfamily{zhsong}}
+\providecommand\heiti{\CJKfamily{zhhei}}
+\providecommand\kaishu{\CJKfamily{zhkai}}
+\xeCJKsetup{CJKmath=true}
+
+% ----------------------------------------------------------------------------
+% 04. 通用文字命令
+% ----------------------------------------------------------------------------
+% 黄色高亮支持中文自动换行（不将整段放入不可断行盒子）。
+\DeclareRobustCommand\wordhighlight[1]{%
+	\CJKunderanyline{0pt}{\color{yellow}\rule[-2bp]{2bp}{13bp}}{#1}}
+
+% ----------------------------------------------------------------------------
+% 05. 页面尺寸、页眉页脚与正文行距
+% ----------------------------------------------------------------------------
+% 11907 x 16840 twips；边距 1418 twips。
+\geometry{paperwidth=595.35bp,paperheight=842bp,
+	left=70.9bp,right=70.9bp,top=70.9bp,bottom=70.9bp,
+	headheight=16bp,headsep=14.8bp,footskip=21.3bp}
+% 页眉右侧默认随 reporttype 更新；plain 与正文使用相同页眉页脚。
+\newcommand\proposal@pagefields{%
+	\fancyhf{}%
+	\fancyhead[L]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerleft}%
+	\fancyhead[R]{\normalfont\songti\fontsize{10.5bp}{13bp}\selectfont\proposal@headerright}%
+	\renewcommand\headrulewidth{0.75bp}%
+	\renewcommand\footrulewidth{0pt}%
+	\ifproposal@pagenumbers
+	\fancyfoot[C]{\normalfont\rmfamily\fontsize{10.5bp}{13bp}\selectfont\thepage}%
+	\fi}
+\fancypagestyle{proposal}{\proposal@pagefields}
+\fancypagestyle{plain}{\proposal@pagefields}
+\pagestyle{proposal}
+\setlength\parindent{24bp}
+\setlength\parskip{0pt}
+\raggedbottom
+\setlength\emergencystretch{1em}
+% 原 Word 网格 15.6bp，正文 1.2 倍；PDF 连续行基线相距 18.72bp。
+\renewcommand\normalsize{%
+	\@setfontsize\normalsize{12bp}{18.72bp}%
+	\setlength\abovedisplayskip{8bp}\setlength\belowdisplayskip{8bp}%
+	\setlength\abovedisplayshortskip{4bp}\setlength\belowdisplayshortskip{4bp}}
+\AtBeginDocument{\normalsize\songti}
+
+% ----------------------------------------------------------------------------
+% 06. 标题层级与章节编号
+% ----------------------------------------------------------------------------
+% 标题末尾点属于编号格式；一级/二级之间不强制换页。
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\ctexset{
+	section={format=\normalfont\heiti\fontsize{15bp}{15.6bp}\selectfont,
+		name={},number=\arabic{section},aftername={.\hspace{1.2bp}},
+		beforeskip=7.8bp,afterskip=7.8bp,indent=0pt,afterindent=true},
+	subsection={format=\normalfont\heiti\fontsize{14bp}{18.72bp}\selectfont,
+		name={},number=\thesection.\arabic{subsection},
+		numberformat=\fontsize{12bp}{18.72bp}\selectfont,
+		aftername={.\hspace{2bp}},beforeskip=7.8bp,afterskip=7.8bp,
+		indent=0pt,afterindent=true,runin=false},
+	subsubsection={format=\normalfont\heiti\fontsize{12bp}{15.6bp}\selectfont,
+		name={},number=\thesubsection.\arabic{subsubsection},
+		aftername={.\hspace{0.5bp}},beforeskip=0pt,afterskip=0pt,
+		indent=0pt,afterindent=true,runin=false},
+	paragraph={format=\normalfont\heiti\fontsize{12bp}{24.18bp}\selectfont,
+		name={},number=\thesubsubsection.\arabic{paragraph},
+		aftername={.\hspace{6bp}},beforeskip=0pt,afterskip=0pt,
+		indent=0pt,runin=false,afterindent=true}
+}
+
+% ----------------------------------------------------------------------------
+% 07. 目录样式与目录入口
+% ----------------------------------------------------------------------------
+% 四级目录：宋体12bp，不沿用 LaTeX 默认的加粗一级条目。
+\titlecontents{section}[52.6bp]
+{\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
+{\contentslabel[\thecontentslabel.]{28.6bp}}{}
+{\titlerule*[3bp]{.}\contentspage}
+\titlecontents{subsection}[73.6bp]
+{\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
+{\contentslabel[\thecontentslabel.]{37.6bp}}{}
+{\titlerule*[3bp]{.}\contentspage}
+\titlecontents{subsubsection}[84bp]
+{\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
+{\contentslabel[\thecontentslabel.]{36bp}}{}
+{\titlerule*[3bp]{.}\contentspage}
+\titlecontents{paragraph}[102bp]
+{\normalfont\songti\fontsize{12bp}{18.72bp}\selectfont}
+{\contentslabel[\thecontentslabel.]{42bp}}{}
+{\titlerule*[3bp]{.}\contentspage}
+\newcommand\proposaltableofcontents{%
+	\clearpage\pagenumbering{Roman}%
+	\pdfbookmark[0]{\contentsname}{proposal-toc}%
+	{\centering\normalfont\songti\fontsize{12bp}{21bp}\selectfont\contentsname\par}%
+	\begingroup\normalsize\@starttoc{toc}\endgroup
+	\clearpage\pagenumbering{arabic}}
+
+% ----------------------------------------------------------------------------
+% 08. 中文名称、图表、交叉引用及列表
+% ----------------------------------------------------------------------------
+% 即使主文件使用 scheme=plain，自动生成的名称也统一为中文。
+\renewcommand\contentsname{目录}
+\renewcommand\listfigurename{插图目录}
+\renewcommand\listtablename{表格目录}
+\renewcommand\abstractname{摘要}
+\renewcommand\appendixname{附录}
+\renewcommand\refname{参考文献}
+\renewcommand\figurename{图}
+\renewcommand\tablename{表}
+
+% 同时设置 \cref、\Cref 和 \autoref，集中维护各类引用名称。
+\newcommand\proposal@refname[2]{%
+	\crefname{#1}{#2}{#2}%
+	\Crefname{#1}{#2}{#2}%
+	\@namedef{#1autorefname}{#2}}
+\proposal@refname{figure}{图}
+\proposal@refname{table}{表}
+\proposal@refname{equation}{式}
+\proposal@refname{section}{小节}
+\proposal@refname{subsection}{小节}
+\proposal@refname{subsubsection}{小节}
+\proposal@refname{paragraph}{段}
+\proposal@refname{subparagraph}{段}
+\proposal@refname{part}{部分}
+\proposal@refname{appendix}{附录}
+\proposal@refname{page}{页}
+\proposal@refname{footnote}{脚注}
+\renewcommand\itemautorefname{条目}
+\proposal@refname{enumi}{条目}
+\proposal@refname{enumii}{条目}
+\proposal@refname{enumiii}{条目}
+\proposal@refname{enumiv}{条目}
+% 多对象及范围引用：图 1 和 2、图 1 至 3、图 1 和表 1。
+\newcommand\crefpairconjunction{和}
+\newcommand\crefmiddleconjunction{、}
+\newcommand\creflastconjunction{和}
+\newcommand\crefpairgroupconjunction{和}
+\newcommand\crefmiddlegroupconjunction{、}
+\newcommand\creflastgroupconjunction{和}
+\newcommand\crefrangeconjunction{至}
+
+% 图表标题：宋体；数字、拉丁字母沿用正文西文字体。
+\DeclareCaptionFont{proposal}{\normalfont\songti\fontsize{10bp}{15.6bp}\selectfont}
+\captionsetup{font=proposal,labelfont=normalfont,labelsep=space,
+	justification=centering,singlelinecheck=false,skip=3bp}
+\setlist[enumerate]{label=（\arabic*）,leftmargin=48bp,labelsep=0pt,
+	itemsep=0pt,parsep=0pt,topsep=0pt,partopsep=0pt}
+\setlist[itemize]{leftmargin=24bp,itemsep=0pt,parsep=0pt,topsep=0pt}
+\setlength\textfloatsep{9bp}
+\setlength\intextsep{9bp}
+
+% ----------------------------------------------------------------------------
+% 09. 参考文献（natbib / GB/T 7714）
+% ----------------------------------------------------------------------------
+% 参考文献不缩进：编号与续行均从正文左边界开始，编号后空3bp。
+% thebibliography 自动生成参考文献 section；正文无需再写 \section{参考文献}。
+\renewenvironment{thebibliography}[1]{%
+	\section{\refname}%
+	\normalfont\songti\fontsize{12bp}{15.6bp}\selectfont
+	\list{\@biblabel{\the\c@NAT@ctr}}{%
+		\global\c@NAT@ctr\z@
+		\setlength\leftmargin{0pt}\setlength\rightmargin{0pt}%
+		\setlength\labelwidth{0pt}\setlength\labelsep{0pt}%
+		\setlength\itemindent{0pt}\setlength\listparindent{0pt}%
+		\setlength\itemsep{0pt}\setlength\parsep{0pt}\setlength\topsep{0pt}%
+		\renewcommand\makelabel[1]{##1\hspace{3bp}}}%
+	\let\NAT@bibitem@first@sw\@firstoftwo
+	\sloppy\clubpenalty4000\widowpenalty4000
+}{\bibitem@fin\endlist\bibcleanup}
+
+% ----------------------------------------------------------------------------
+% 10. 封面绘制与封面入口
+% ----------------------------------------------------------------------------
 \newcommand\proposal@coverrow[3]{%
-  \put(133.225,-#1){\makebox[96.4bp][s]{#2}%
-    \underline{\makebox[232.5bp][c]{#3}}}}
+	\put(133.225,-#1){\makebox[96.4bp][s]{#2}%
+		\underline{\makebox[232.5bp][c]{#3}}}}
 \newcommand\makeproposalcover{%
-  \clearpage\hypersetup{pageanchor=false}\thispagestyle{empty}%
-  \hypersetup{pdftitle={\proposal@title},pdfauthor={\proposal@author}}%
-  \pdfbookmark[0]{封面}{proposal-cover}%
-  \AddToShipoutPictureFG*{\AtPageUpperLeft{%
-    \setlength\unitlength{1bp}%
-    \normalfont\songti\bfseries
-    % 原始校徽和校名字样见 figs/README.md；仅用 graphicx 裁去白边。
-    \put(297.675,-135){\makebox[0pt][c]{%
-      \includegraphics[trim=25bp 72bp 25bp 70bp,clip,width=32mm]{figs/hit-emblem.jpg}}}%
-    \put(297.675,-195){\makebox[0pt][c]{%
-      \includegraphics[trim=60bp 140bp 60bp 90bp,clip,width=92mm]{figs/hit-wordmark.jpg}}}%
-    \ifx\proposal@campus\@empty\else
-      \put(297.675,-217){\makebox[0pt][c]{%
-        \kaishu\fontsize{14bp}{18bp}\selectfont（\proposal@campus）}}%
-    \fi
-    \put(297.675,-250){\makebox[0pt][c]{%
-      \fontsize{22bp}{31.2bp}\selectfont
-      \xeCJKsetup{CJKglue={\hskip 2bp}}\proposal@reporttype}}%
-    \put(70.9,-300){\vtop{\hsize=453.55bp\centering\parindent=0pt
-      \fontsize{18bp}{31.2bp}\selectfont
-      题\ 目：\proposal@title\par}}%
-    \fontsize{16bp}{35bp}\selectfont
-    \put(297.675,-370){\makebox[0pt][c]{（\proposal@doctype）}}%
-    \proposal@coverrow{412}{学\hfill 院}{\proposal@college}%
-    \proposal@coverrow{447}{专业学位类别}{\proposal@major}%
-    \proposal@coverrow{482}{导\hfill 师}{\proposal@supervisor}%
-    \proposal@coverrow{517}{联合培养导师}{\proposal@cosupervisor}%
-    \proposal@coverrow{552}{研\hfill 究\hfill 生}{\proposal@author}%
-    \proposal@coverrow{587}{学\hfill 号}{\proposal@studentid}%
-    \proposal@coverrow{622}{开题报告日期}{\proposal@date}%
-    \put(297.675,-758.6){\makebox[0pt][c]{研究生院制}}%
-  }}%
-  \null\clearpage\hypersetup{pageanchor=true}\pagenumbering{arabic}}
+	\clearpage\hypersetup{pageanchor=false}\thispagestyle{empty}%
+	\hypersetup{pdftitle={\proposal@title},pdfauthor={\proposal@author}}%
+	\pdfbookmark[0]{封面}{proposal-cover}%
+	\AddToShipoutPictureFG*{\AtPageUpperLeft{%
+			\setlength\unitlength{1bp}%
+			\normalfont\songti\bfseries
+			% 原始校徽和校名字样见 figs/README.md；仅用 graphicx 裁去白边。
+			\put(297.675,-135){\makebox[0pt][c]{%
+					\includegraphics[trim=25bp 72bp 25bp 70bp,clip,width=32mm]{figs/hit-emblem.jpg}}}%
+			\put(297.675,-195){\makebox[0pt][c]{%
+					\includegraphics[trim=60bp 140bp 60bp 90bp,clip,width=92mm]{figs/hit-wordmark.jpg}}}%
+			\ifx\proposal@campus\@empty\else
+			\put(297.675,-217){\makebox[0pt][c]{%
+					\kaishu\fontsize{14bp}{18bp}\selectfont（\proposal@campus）}}%
+			\fi
+			\put(297.675,-250){\makebox[0pt][c]{%
+					\fontsize{22bp}{31.2bp}\selectfont
+					\xeCJKsetup{CJKglue={\hskip 2bp}}\proposal@reporttype}}%
+			\put(70.9,-300){\vtop{\hsize=453.55bp\centering\parindent=0pt
+					\fontsize{18bp}{31.2bp}\selectfont
+					题\ 目：\proposal@title\par}}%
+			\fontsize{16bp}{35bp}\selectfont
+			\put(297.675,-370){\makebox[0pt][c]{（\proposal@doctype）}}%
+			\proposal@coverrow{412}{学\hfill 院}{\proposal@college}%
+			\proposal@coverrow{447}{专业学位类别}{\proposal@major}%
+			\proposal@coverrow{482}{导\hfill 师}{\proposal@supervisor}%
+			\proposal@coverrow{517}{联合培养导师}{\proposal@cosupervisor}%
+			\proposal@coverrow{552}{研\hfill 究\hfill 生}{\proposal@author}%
+			\proposal@coverrow{587}{学\hfill 号}{\proposal@studentid}%
+			\proposal@coverrow{622}{开题报告日期}{\proposal@date}%
+			\put(297.675,-758.6){\makebox[0pt][c]{研究生院制}}%
+	}}%
+	\null\clearpage\hypersetup{pageanchor=true}\pagenumbering{arabic}}
+
+% 终止读取，避免意外附加内容。
 \endinput
