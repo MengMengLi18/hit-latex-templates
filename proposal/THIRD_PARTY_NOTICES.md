@@ -15,4 +15,4 @@ XeLaTeX、CTeX、fontspec、natbib、gbt7714 等编译依赖由使用者的 TeX 
 
 ## HIT 校徽与校名字样
 
-`assets/hit-emblem.jpg` 和 `assets/hit-wordmark.jpg` 来自哈尔滨工业大学土木工程学院公开提供的[校徽图片下载页面](https://civil.hit.edu.cn/2018/0420/c9283a204875/page.htm)。原始文件未修改；相关权利归哈尔滨工业大学，不纳入本项目的 MIT 许可。来源、尺寸及校验值见[标识资源说明](assets/README.md)。
+`figs/hit-emblem.jpg` 和 `figs/hit-wordmark.jpg` 来自哈尔滨工业大学土木工程学院公开提供的[校徽图片下载页面](https://civil.hit.edu.cn/2018/0420/c9283a204875/page.htm)。原始文件未修改；相关权利归哈尔滨工业大学，不纳入本项目的 MIT 许可。来源、尺寸及校验值见[标识资源说明](figs/README.md)。

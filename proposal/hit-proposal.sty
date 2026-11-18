@@ -2,7 +2,7 @@
 % HIT 学位开题报告通用排版样式。
 % Word 的 point 对应 TeX 的 bp，不是 TeX 的 pt。
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{hit-proposal}[2026/11/18 v1.1 HIT proposal template]
+\ProvidesPackage{hit-proposal}[2026/11/18 v1.2 HIT proposal template]
 \newif\ifproposal@strict
 \newif\ifproposal@pagenumbers
 \proposal@pagenumberstrue
@@ -189,7 +189,9 @@
 % 封面内容集中设置，版式与内容分离。
 \def\proposal@reporttype{博士学位开题报告}
 \def\proposal@doctype{学位论文}
-\def\proposal@headerleft{哈尔滨工业大学}
+\def\proposal@campus{}
+\newcommand\proposal@schoolname{哈尔滨工业大学\ifx\proposal@campus\@empty\else（\proposal@campus）\fi}
+\def\proposal@headerleft{\proposal@schoolname}
 \def\proposal@headerright{\proposal@reporttype}
 \def\proposal@title{请填写论文题目}
 \def\proposal@college{请填写学院}
@@ -201,6 +203,7 @@
 \def\proposal@date{请填写日期}
 \define@key{proposal}{reporttype}{\def\proposal@reporttype{#1}}
 \define@key{proposal}{doctype}{\def\proposal@doctype{#1}}
+\define@key{proposal}{campus}{\def\proposal@campus{#1}}
 \define@key{proposal}{headerleft}{\def\proposal@headerleft{#1}}
 \define@key{proposal}{headerright}{\def\proposal@headerright{#1}}
 \define@key{proposal}{title}{\def\proposal@title{#1}}
@@ -222,11 +225,15 @@
   \AddToShipoutPictureFG*{\AtPageUpperLeft{%
     \setlength\unitlength{1bp}%
     \normalfont\songti\bfseries
-    % 原始校徽和校名字样见 assets/README.md；仅用 graphicx 裁去白边。
+    % 原始校徽和校名字样见 figs/README.md；仅用 graphicx 裁去白边。
     \put(297.675,-135){\makebox[0pt][c]{%
-      \includegraphics[trim=25bp 72bp 25bp 70bp,clip,width=32mm]{assets/hit-emblem.jpg}}}%
+      \includegraphics[trim=25bp 72bp 25bp 70bp,clip,width=32mm]{figs/hit-emblem.jpg}}}%
     \put(297.675,-195){\makebox[0pt][c]{%
-      \includegraphics[trim=60bp 140bp 60bp 90bp,clip,width=92mm]{assets/hit-wordmark.jpg}}}%
+      \includegraphics[trim=60bp 140bp 60bp 90bp,clip,width=92mm]{figs/hit-wordmark.jpg}}}%
+    \ifx\proposal@campus\@empty\else
+      \put(297.675,-217){\makebox[0pt][c]{%
+        \kaishu\fontsize{14bp}{18bp}\selectfont（\proposal@campus）}}%
+    \fi
     \put(297.675,-250){\makebox[0pt][c]{%
       \fontsize{22bp}{31.2bp}\selectfont
       \xeCJKsetup{CJKglue={\hskip 2bp}}\proposal@reporttype}}%

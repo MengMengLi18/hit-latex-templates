@@ -14,7 +14,7 @@
 
 ## 快速开始
 
-安装包含 XeLaTeX、BibTeX、CTeX、natbib 和 gbt7714 的 TeX 发行版。开题模板已附带所需的开源中西文字体、HIT 校徽和校名字样。默认开启文字页眉与居中页码，封面不编号，目录使用罗马数字，正文从 1 开始。
+安装包含 XeLaTeX、BibTeX、CTeX、natbib 和 gbt7714 的 TeX 发行版。开题模板已附带所需的开源中西文字体、HIT 校徽和校名字样。可通过 `campus={深圳}` 添加深圳校区标注。默认开启文字页眉与居中页码，封面不编号，目录使用罗马数字，正文从 1 开始。
 
 进入开题模板目录并编译：
 
@@ -44,9 +44,8 @@ hit-latex-templates/
 │   ├── cover-info.tex         # 封面占位字段
 │   ├── hit-proposal.sty       # 排版设置
 │   ├── references.bib         # 公开书目示例
-│   ├── assets/                # HIT 校徽、校名字样与来源说明
+│   ├── figs/                  # 校徽、校名字样、正文源图与来源说明
 │   ├── fonts/                 # 开源字体与上游许可证
-│   ├── figures/               # 图片目录
 │   ├── docs/                  # 版式说明、文献条目说明和预览
 │   ├── build.sh
 │   └── README.md
@@ -61,7 +60,7 @@ hit-latex-templates/
 
 撰写个人报告时，可复制 `proposal/` 到独立目录使用；目录内的字体、许可文件和说明应一并保留。公开模板保留占位信息。
 
-若要建立 Git 仓库，在本仓库根目录执行 `git init -b main`。根目录的 `.gitignore` 已覆盖各模板的编译产物、日志、编辑器状态和可选本地字体；公开示例 `docs/preview.pdf` 会保留。
+若要建立 Git 仓库，在本仓库根目录执行 `git init -b main`。根目录的 `.gitignore` 已覆盖各模板的编译产物、日志、编辑器状态和可选本地字体；公开示例 `docs/preview.pdf` 和 `figs/` 下的图片（含 PDF 源图）会保留。完整范围见 [上传文件说明](proposal/docs/repository-files.md)。
 
 ## 许可
 

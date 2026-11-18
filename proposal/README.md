@@ -45,9 +45,8 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 | `main.tex` | 正文章节和格式示例 |
 | `hit-proposal.sty` | 全部排版设置，与正文内容分开 |
 | `references.bib` | 参考文献数据库；仅含公开的排版文献示例 |
-| `figures/` | 个人报告副本中存放图片的位置 |
 | `fonts/` | 开源字体、来源说明、许可证和校验值 |
-| `assets/` | HIT 校徽、校名字样与官方来源说明 |
+| `figs/` | HIT 校徽、校名字样、正文图片与来源说明 |
 | `docs/format-spec.md` | 默认版式参数 |
 | `docs/preview.pdf` | 用公开占位内容编译的预览 |
 | `build.sh`、`.latexmkrc` | 编译入口与配置 |
@@ -58,6 +57,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 
 ```tex
 \proposalsetup{
+  campus={}, % 深圳校区可填写：campus={深圳}
   reporttype={博士学位开题报告},
   doctype={学位论文},
   title={论文题目},
@@ -70,6 +70,8 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
   date={年\quad 月\quad 日}
 }
 ```
+
+公共示例的 `campus` 默认为空；深圳校区填写 `campus={深圳}`，封面会在校名下方标出“（深圳）”，默认左页眉也会同步更新。
 
 联合培养导师没有内容时，可将 `cosupervisor` 留空。报告名称可通过 `reporttype` 调整；题目或字段明显变长后，请检查封面是否仍能容纳。
 
@@ -102,7 +104,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 ```tex
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\linewidth]{figures/example.pdf}
+  \includegraphics[width=0.8\linewidth]{figs/example.pdf}
   \caption{图片标题}
   \label{fig:example}
 \end{figure}
@@ -112,7 +114,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 
 ## 样式选项
 
-默认页眉左侧为“哈尔滨工业大学”，右侧使用封面中的 `reporttype`，下方保留横线。页码在页脚居中：封面不显示页眉、横线或页码；目录使用 I、II 等罗马数字；正文从 1 开始连续编号。普通页面和 `plain` 页面使用相同页眉页脚。
+默认页眉左侧为“哈尔滨工业大学”，填写 `campus` 后追加相应校区，右侧使用封面中的 `reporttype`，下方保留横线。页码在页脚居中：封面不显示页眉、横线或页码；目录使用 I、II 等罗马数字；正文从 1 开始连续编号。普通页面和 `plain` 页面使用相同页眉页脚。
 
 可以在 `cover-info.tex` 的 `\proposalsetup` 中按需覆盖页眉：
 
@@ -138,7 +140,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 | `chinesecaptions` | 将图题标签改为“图” |
 | `strictfonts` | 使用自行提供的宋体、黑体、楷体和 Times New Roman；缺少文件时报错 |
 
-封面使用随模板保存的官方校徽与校名字样，来源及原始文件校验值见 [标识资源说明](assets/README.md)。编译时无需联网。
+封面使用随模板保存的官方校徽与校名字样，来源及原始文件校验值见 [标识资源说明](figs/README.md)。编译时无需联网。
 
 默认字体固定为项目附带的 Fandol 和 TeX Gyre Termes，不会根据某台机器上的字体自动改变。`strictfonts` 仅从 `fonts/local/` 加载，所需文件名见该目录的说明。该目录里的字体文件不会被 Git 默认收录。
 
@@ -148,7 +150,7 @@ Windows 中可以在 TeX 编辑器选择 XeLaTeX 与 BibTeX，或在终端运行
 
 维护完整模板集时，应在上一级仓库根目录初始化和使用 Git；单独复制本模板后，也可以在副本中建立独立仓库。
 
-仓库需要保留源文件、开放字体及其许可证。`build/`、编译日志、同步文件和编辑器配置已被忽略。`docs/preview.pdf` 是可以公开的占位示例，已在忽略规则中单独保留。
+仓库需要保留源文件、开放字体及其许可证。`build/`、编译日志、同步文件和编辑器配置已被忽略。`docs/preview.pdf` 是可以公开的占位示例，已在忽略规则中单独保留。源图（含 `figs/` 下的 PDF）和开源字体也会保留；原始 Word、压缩包、备份和指定的私有目录会忽略。具体范围见 [上传文件说明](docs/repository-files.md)。
 
 ## 许可
 

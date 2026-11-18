@@ -1,5 +1,7 @@
-# Build products; sync/log files can contain machine-specific paths.
-/build/
+# LaTeX build outputs and editor-generated artifacts.
+build/
+_build/
+out/
 *.aux
 *.bbl
 *.bcf
@@ -9,29 +11,70 @@
 *.log
 *.out
 *.run.xml
+*.synctex
 *.synctex.gz
 *.toc
 *.lof
 *.lot
+*.loa
+*.lol
 *.xdv
+*.dvi
 *.nav
 *.snm
 *.vrb
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.acn
+*.acr
+*.alg
+*.thm
+
+# Compiled reports stay local; public previews and source figures are retained.
 *.pdf
-!docs/preview.pdf
+!**/docs/preview.pdf
+!**/figs/**/*.pdf
+!**/figures/**/*.pdf
 
-# Optional private fonts are local-only.
-/fonts/local/*
-!/fonts/local/README.txt
+# Private reports, drafts, Word originals, and archive/backup copies.
+private/
+personal/
+local-data/
+local-output/
+.local/
+*.local.tex
+*.local.bib
+*.doc
+*.docx
+*.odt
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.bak
+*.backup
+*.orig
+*.tmp
+*.temp
+*.old
+*~
 
-# Editor and OS state.
+# Optional proprietary fonts; preserve the public instructions.
+**/fonts/local/*
+!**/fonts/local/README.txt
+
+# Editor/OS state and local environment settings.
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
-*~
 __pycache__/
 .env
 .env.*
